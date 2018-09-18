@@ -6,18 +6,34 @@ val spark = SparkSession.builder().getOrCreate()
 val df = spark.read.option("header", "true").option("inferSchema","true")csv("Netflix_2011_2016.csv")
 //FL_insurance_sampleNetflix_2011_2016
 
-//parte3 y 4
+//parte 3
+df.schema.fields.foreach(x => println(x))
+df.columns
+
+//parte 4
 df.printSchema()
+
 //punto5
 df.select("Date", "Open","High","Low","Close").show()
+
+//punto 6
+df.describe().show()
+
 //punto7
-df.createOrReplaceTempView("HV")
-df.sqlContext.sql("select * from HV").show()
+val df2 = df.withColumn("HV Ratio", df("High")/df("Volume"))
+df2.show()
+
 //pregunta 8
-df.select(max("High")).show
+df.groupBy("Date").agg(max("High")).show
+
 //pregunta 9
-spark.close
-println("Cierra sesion de spark en la base de datos")
+df.select("Close").describe().show()
+df.select(mean("Close")).show()
+
+println("Esta columna
+  significa o se refieren a los valores con
+  la que cerró la bolsa de valores de Netflix
+  teniendo una media de... ")
 
 //Pregunta 10
 df.select(min("Volume"), max("Volume")).show()
@@ -26,11 +42,16 @@ df.select(min("Volume"), max("Volume")).show()
 //preguntas de abajo pregunta 11
 //pregunta a
 df.filter("Close > 600").count()
+
 //pregunta b
-df.filter("Date > 500").select(var_pop("Date"))
+val porcentage = df.filter($"High" > 500).count().toDouble / df.select("High").count() * 100
+
 //pregunta c
 df.select(corr("High","Volume")).show()
+
 //pregunta d
-df.select(max("Date")).show
+df.select(max(year(df("Date")))).show()
+df.groupBy(year(df("Date"))).agg(max("High")).show
+
 //pregunta e
-df.select(avg("Date")).show
+df.groupBy(month(df("Date"))).agg(avg("Close")).show
