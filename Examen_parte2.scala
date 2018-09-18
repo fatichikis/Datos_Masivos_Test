@@ -29,7 +29,6 @@ df.groupBy("Date").agg(max("High")).show
 
 //pregunta 9 (Cual es el significado de la columna cerrar (close))
 df.select("Close").describe().show()
-df.select(mean("Close")).show()
 
 println("Esta columna
   significa o se refieren a los valores con
@@ -42,7 +41,7 @@ df.select(min("Volume"), max("Volume")).show()
 
 //preguntas de abajo pregunta 11
 //pregunta a (Cuantos dias fue el cierre inferior a 600)
-df.filter("Close > 600").count()
+df.filter("Close < 600").count()
 
 //pregunta b (Que porcentaje del tiempo fue el alto mayor de 500)
 val porcentage = df.filter("High > 500").count().toDouble / df.select("High").count() * 100
