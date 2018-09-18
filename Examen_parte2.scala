@@ -1,8 +1,8 @@
 //Pregunta 1 (Comienza un simple Spark Session)
 import org.apache.spark.sql.SparkSession
+val spark = SparkSession.builder().getOrCreate()
 
 //parte 2 (Cargue el archivo netflix)
-val spark = SparkSession.builder().getOrCreate()
 val df = spark.read.option("header", "true").option("inferSchema","true")csv("Netflix_2011_2016.csv")
 //FL_insurance_sampleNetflix_2011_2016
 
