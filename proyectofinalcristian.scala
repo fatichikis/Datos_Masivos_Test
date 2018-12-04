@@ -96,9 +96,19 @@ val pipeline = new Pipeline().setStages(Array(featureIndexer, dt))
 val model43 = pipeline.fit(trainingData)
 val predictions = model.transform(testData)
 predictions.select("prediction", "label", "features").show(5)
-
-//REGRESION
 val evaluator = new RegressionEvaluator().setLabelCol("label").setPredictionCol("prediction").setMetricName("rmse")
 val  e4= predictions.withColumn("prediction",'prediction.cast("Double"))
 val rmse = evaluator.evaluate(e4)
 println(s"Root Mean Squared Error (RMSE) on test data = $rmse")
+
+//SVM
+import org.apache.spark.ml.classification.LinearSVC
+val change = df.withColumnRenamed("y", "label")
+val ft = change.select("label","features")
+ft.show()
+val cs1 = ft.withColumn("1abel",when(col("label").equalTo("1"),0).otherwise(col("label")))
+val cs2 = cs1.withColumn("label",when(col("label").equalTo("2"),1).otherwise(col("label")))
+val cs3 = cs2.withColumn("label",'label.cast("Int"))
+val lsvc = new LinearSVC().setMaxIter(10).setRegParam(0.1)
+val lsvcModel = lsvc.fit(cs3)
+println(s"Coefficients: ${lsvcModel.coefficients} Intercept: ${lsvcModel.intercept}")
